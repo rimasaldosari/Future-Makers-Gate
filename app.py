@@ -1,29 +1,67 @@
 import streamlit as st
 import pandas as pd
 
-# 1. إعدادات الصفحة
-st.set_page_config(page_title="بوصلة الهاكثونات | ريماس الدوسري", page_icon="🚀", layout="wide")
+# 1. إعدادات الصفحة الأساسية
+st.set_page_config(
+    page_title="بوصلة الهاكثونات | ريماس الدوسري", 
+    page_icon="🚀", 
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
-# 2. الرابط الخاص بالجدول
+# 2. رابط جدول البيانات المباشر
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?output=csv"
 
-# 3. تصميم الواجهة
+# 3. تصميم الواجهة وإخفاء كل زوائد المتصفح وستريمليت (اللمسة الاحترافية)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-    html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; }
-    .stApp { background-color: #ffffff; }
+    
+    /* إخفاء شريط ستريمليت العلوي والقائمة نهائياً */
+    header, footer, .stDeployButton, #MainMenu {
+        visibility: hidden !important;
+        height: 0 !important;
+    }
+    
+    /* جعل التطبيق يبدأ من أعلى الشاشة تماماً */
+    .block-container {
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        margin-top: -50px !important;
+    }
+
+    /* تنسيق الخطوط والاتجاهات */
+    html, body, [class*="css"] { 
+        font-family: 'Cairo', sans-serif; 
+        direction: rtl; 
+        text-align: right; 
+    }
+    
+    .stApp { background-color: #ffffff !important; }
+    
+    /* تصميم بطاقات الهاكثونات بجودة عالية */
     .hack-card {
         background: #ffffff;
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         margin-bottom: 20px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #f0f4f8;
         border-right: 10px solid #1e3a8a;
     }
-    .info-line { font-size: 18px; margin: 10px 0; color: #000000 !important; font-weight: 500; }
-    .info-label { color: #1e3a8a !important; font-weight: bold; }
+    
+    .info-line { 
+        font-size: 18px; 
+        margin: 10px 0; 
+        color: #000000 !important; 
+        font-weight: 600;
+    }
+    
+    .info-label { 
+        color: #1e3a8a !important; 
+        font-weight: bold; 
+    }
+    
     .description-box {
         background-color: #f8fafc;
         padding: 15px;
@@ -32,6 +70,16 @@ st.markdown("""
         color: #1a202c !important;
         margin-top: 10px;
         border: 1px solid #e2e8f0;
+    }
+
+    /* تلوين أزرار الروابط */
+    .stButton>button {
+        width: 100%;
+        border-radius: 10px;
+        background-color: #1e3a8a !important;
+        color: white !important;
+        font-weight: bold;
+        border: none;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -46,16 +94,14 @@ def load_data():
 
 df = load_data()
 
-# 4. العنوان
-st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
+# 4. العنوان الرئيسي
+st.markdown('<h1 style="text-align:center; color:#1e3a8a; padding-top:20px;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
 
-# 5. القائمة الجانبية (هنا التعديل الجديد)
+# 5. القائمة الجانبية (البحث وتثبيت التطبيق)
 with st.sidebar:
-    # رسالة تعليمية لتحويل الموقع لتطبيق
-    st.success("💡 **لتحويله إلى تطبيق:**\n\nاضغط على **'مشاركة'** ثم **'إضافة للشاشة الرئيسية'** ليظهر كأيقونة تطبيق مستقلة على جوالك!")
-    
+    st.success("💡 **لفتة تقنية:**\nلفتح التطبيق بدون شريط المتصفح، اختر 'إضافة إلى الشاشة الرئيسية' من خيارات المشاركة.")
     st.markdown("---")
-    st.markdown("<h2 style='text-align:center;'>🔍 البحث</h2>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center;'>🔍 خيارات البحث</h3>", unsafe_allow_html=True)
     if df is not None:
         sel_major = st.selectbox("🎯 التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
         sel_loc = st.selectbox("📍 المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
@@ -64,7 +110,7 @@ with st.sidebar:
     st.markdown("<div style='text-align:center;'><b>تطوير:</b><br>ريماس الدوسري</div>", unsafe_allow_html=True)
     st.link_button("🔗 LinkedIn Profile", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
 
-# 6. عرض البيانات
+# 6. عرض النتائج
 if df is not None:
     filt_df = df.copy()
     if sel_major != "الكل": filt_df = filt_df[filt_df['major'] == sel_major]
@@ -88,5 +134,5 @@ if df is not None:
             
             link = str(row.get('Link', '')).strip()
             if link and link != 'nan':
-                st.link_button(f"🔗 سجل الآن", link if link.startswith('http') else f"https://{link}")
+                st.link_button(f"🔗 سجل الآن في {row.get('Name')}", link if link.startswith('http') else f"https://{link}")
             st.markdown("<br>", unsafe_allow_html=True)
