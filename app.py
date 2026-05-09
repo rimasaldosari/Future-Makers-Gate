@@ -1,27 +1,27 @@
 import streamlit as st
 import pandas as pd
 
-# 1. إعدادات الصفحة
-st.set_config(page_title="بوصلة الهاكثونات | ريماس الدوسري", page_icon="🚀", layout="wide")
+# 1. إعدادات الصفحة (تم تصحيح السطر هنا)
+st.set_page_config(page_title="بوصلة الهاكثونات | ريماس الدوسري", page_icon="🚀", layout="wide")
 
-# 2. رابط جدول البيانات (رابطك المباشر)
+# 2. رابط جدول البيانات الخاص بك
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
 
-# 3. تصميم الواجهة (CSS)
+# 3. تصميم الواجهة (CSS) لضمان وضوح الألوان وقسم "قيم فكرتك"
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
     html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; }
     .stApp { background-color: #f8fafc; }
     
-    /* تنسيق قسم قيم فكرتك ليصبح النص واضحاً */
+    /* تنسيق قسم قيم فكرتك لضمان وضوح النص */
     .stExpander {
         background-color: white !important;
         border: 1px solid #e2e8f0 !important;
         border-radius: 12px !important;
     }
     .stExpander label, .stExpander p, .stExpander div {
-        color: #1e293b !important; /* لون كحلي غامق جداً وواضح */
+        color: #1e293b !important;
     }
     
     .hack-card {
@@ -59,9 +59,10 @@ def load_data():
 
 df = load_data()
 
+# العنوان الرئيسي
 st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
 
-# 5. قسم "قيم فكرتك" بعد تعديل ألوان الخط
+# 5. قسم "قيم فكرتك"
 with st.expander("💡 أيقونة: قيم فكرتك للهاكثون"):
     st.markdown("<h3 style='color:#1e3a8a;'>📊 محلل الابتكار الشخصي</h3>", unsafe_allow_html=True)
     user_idea = st.text_input("ما هي فكرتك الجديدة؟", placeholder="اكتبي فكرتك هنا...")
@@ -83,7 +84,7 @@ with st.sidebar:
         sel_loc = st.selectbox("📍 ابحث حسب المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
         sel_major = st.selectbox("🎯 ابحث حسب التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
 
-# 7. عرض النتائج
+# 7. عرض النتائج من جدولك
 if df is not None:
     filt_df = df.copy()
     if sel_loc != "الكل": filt_df = filt_df[filt_df['Location'] == sel_loc]
