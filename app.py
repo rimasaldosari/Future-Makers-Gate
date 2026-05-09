@@ -1,73 +1,105 @@
 import streamlit as st
-import pandas as pd
 
 # إعدادات الصفحة
 st.set_page_config(page_title="بوصلة الهاكثونات والمعسكرات", layout="wide")
 
-# تخصيص المظهر بـ CSS
+# تصميم CSS ليتناسب مع الصور المرفقة
 st.markdown("""
     <style>
-    .main { background-color: #0e1117; color: white; }
-    .stTitle { font-family: 'Tajawal', sans-serif; text-align: center; color: #00d4ff; }
-    .footer { text-align: center; padding: 20px; color: #888; font-size: 0.9em; }
+    .main { background-color: #ffffff; }
+    .title-text { color: #1e3a8a; font-size: 40px; font-weight: bold; text-align: center; font-family: 'Tajawal', sans-serif; }
+    .card {
+        border: 1px solid #e0e0e0;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+        border-left: 8px solid #1e3a8a;
+    }
+    .card-title { color: #1e3a8a; font-size: 28px; font-weight: bold; margin-bottom: 15px; }
+    .info-item { margin-bottom: 10px; font-size: 18px; color: #333; }
+    .details-box { background-color: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #edf2f7; margin-top: 15px; }
+    .btn-register {
+        background-color: #1a202c;
+        color: white !important;
+        padding: 10px 25px;
+        border-radius: 8px;
+        text-decoration: none;
+        float: right;
+        font-weight: bold;
+    }
+    .sidebar-text { text-align: center; color: #4a5568; }
     </style>
     """, unsafe_allow_html=True)
 
-# العنوان الرئيسي (بدون كلمة مهندسة)
-st.title("🚀 بوصلة الهاكثونات والمعسكرات")
-st.markdown("<h3 style='text-align: center;'>منصة إدارة الابتكار - تطوير ريماس الدوسري</h3>", unsafe_allow_html=True)
+# العنوان الرئيسي
+st.markdown('<div class="title-text">🚀 بوصلة الهاكثونات والمعسكرات</div>', unsafe_allow_html=True)
 
-# القائمة الجانبية أو التبويبات
-tabs = st.tabs(["🔥 الهاكثونات", "🏕️ المعسكرات", "🧠 محلل الأفكار", "📍 مساعدة البوصلة"])
+# تقسيم الصفحة إلى أعمدة (المحتوى الرئيسي والقائمة الجانبية)
+col_main, col_side = st.columns([3, 1])
 
-# 1. قسم الهاكثونات
-with tabs[0]:
-    st.header("🔗 الهاكثونات المتاحة حالياً")
-    hackathon_data = pd.DataFrame({
-        "الهاكثون": ["هاكثون الطاقة 2026", "هاكثون الذكاء الاصطناعي"],
-        "المدينة": ["الرياض", "جدة"],
-        "الحالة": ["متاح", "ينتهي قريباً"]
-    })
-    # خانة قابلة للتعديل
-    edited_hacks = st.data_editor(hackathon_data, num_rows="dynamic", key="hacks")
-
-# 2. قسم المعسكرات
-with tabs[1]:
-    st.header("🏕️ المعسكرات التدريبية")
-    bootcamp_data = pd.DataFrame({
-        "المعسكر": ["معسكر IBM للوكلاء الذكيين", "معسكر تطوير الويب"],
-        "الجهة": ["IBM SkillsBuild", "أكاديمية طويق"],
-        "المدة": ["أسبوعين", "شهر"]
-    })
-    # خانة قابلة للتعديل
-    edited_boots = st.data_editor(bootcamp_data, num_rows="dynamic", key="boots")
-
-# 3. قسم محلل الأفكار (إضافة المدينة والتخصص)
-with tabs[2]:
-    st.header("🧠 قيم فكرتك")
-    col1, col2 = st.columns(2)
-    with col1:
-        name = st.text_input("الاسم", value="ريماس الدوسري")
-        major = st.text_input("التخصص", value="هندسة وعلوم الحاسب") # إضافة التخصص
-    with col2:
-        city = st.text_input("المدينة", value="الخرج") # إضافة المدينة
-        idea_title = st.text_input("عنوان الفكرة")
-    
-    idea_desc = st.text_area("اشرح فكرتك هنا...")
-    
-    if st.button("تحليل وتقييم الفكرة"):
-        st.success(f"تم استلام فكرتك يا {name} في مدينة {city}. سيتم تحليلها بناءً على تخصصك في {major}.")
-
-# 4. مساعدة البوصلة
-with tabs[3]:
-    st.info("هذا القسم مخصص لمساعدتك في العثور على الفريق المناسب أو توضيح شروط المسابقات.")
-
-# ذيل الصفحة (بدون كلمة مهندسة)
-st.markdown("---")
-st.markdown(f"""
-    <div class='footer'>
-        تطوير ريماس الدوسري | جامعة الأمير سطام بن عبدالعزيز
+with col_main:
+    # 1. كرت هاكثون بلاك هات
+    st.markdown("""
+    <div class="card">
+        <div class="card-title">هاكثون بلاك هات</div>
+        <div class="info-item">📍 <b>المدينة:</b> الرياض</div>
+        <div class="info-item">🏢 <b>الجهة:</b> الاتحاد السعودي</div>
+        <div class="info-item">🎯 <b>التخصص:</b> أمن سيبراني</div>
+        <div class="info-item">📅 <b>التاريخ:</b> ديسمبر 2026</div>
+        <div class="details-box">
+            📝 <b>التفاصيل:</b><br>
+            أكبر فعالية تقنية في المنطقة لتبادل الخبرات ومواجهة تحديات الأمن السيبراني العالمية.
+        </div>
         <br>
-        <a href='https://www.linkedin.com/in/rimas-aldosari' target='_blank'>LinkedIn Profile 🔗</a>
+        <a href="#" class="btn-register">🔗 سجل الآن</a>
+        <div style="clear: both;"></div>
     </div>
     """, unsafe_allow_html=True)
+
+    # 2. كرت معسكرات طويق
+    st.markdown("""
+    <div class="card">
+        <div class="card-title">معسكرات طويق</div>
+        <div class="info-item">📍 <b>المدينة:</b> الرياض</div>
+        <div class="info-item">🏢 <b>الجهة:</b> أكاديمية طويق</div>
+        <div class="info-item">🎯 <b>التخصص:</b> تقنيات متقدمة</div>
+        <div class="details-box">
+            📝 <b>التفاصيل:</b><br>
+            معسكرات احترافية مكثفة لتأهيل الكوادر الوطنية في مجالات البرمجة والذكاء الاصطناعي.
+        </div>
+        <br>
+        <a href="#" class="btn-register">🔗 سجل الآن</a>
+        <div style="clear: both;"></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # إضافة قسم "قيم فكرتك" بشكل مبسط بنفس النمط
+    with st.expander("🧠 قيم فكرتك (قسم جديد)"):
+        user_city = st.text_input("مدينتك:")
+        user_major = st.text_input("تخصصك:")
+        idea = st.text_area("اشرح فكرتك هنا:")
+        if st.button("إرسال للتقييم"):
+            st.success("سيتم تقييم فكرتك بناءً على تخصصك وموقعك.")
+
+# القائمة الجانبية (Sidebar)
+with col_side:
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    # إضافة الفلاتر كما ظهرت في صورتك
+    st.selectbox("🎯 التخصص:", ["الكل", "أمن سيبراني", "ذكاء اصطناعي", "برمجة"])
+    st.selectbox("📍 المدينة:", ["الكل", "الرياض", "جدة", "الخرج"])
+    
+    st.markdown("---")
+    st.markdown("""
+    <div class="sidebar-text">
+        <b>تطوير:</b><br>
+        ريماس الدوسري<br><br>
+        <a href='https://www.linkedin.com/in/rimas-aldosari' style='text-decoration:none; color:#1e3a8a;'>LinkedIn Profile 🔗</a>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ميزة التعديل (Editor) تظهر فقط عند الحاجة
+if st.checkbox("🛠️ وضع التعديل (إضافة/تغيير البيانات)"):
+    st.info("يمكنك هنا إضافة بيانات جديدة لتظهر في الكروت أعلاه.")
+    new_title = st.text_input("اسم الفعالية:")
+    # ... يمكن إضافة حقول أخرى هنا لتحديث البيانات ديناميكياً
