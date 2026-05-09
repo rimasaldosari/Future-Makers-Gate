@@ -1,28 +1,18 @@
 import streamlit as st
 import pandas as pd
 
-# 1. إعدادات الصفحة (تم تصحيح السطر هنا)
+# 1. إعدادات الصفحة
 st.set_page_config(page_title="بوصلة الهاكثونات | ريماس الدوسري", page_icon="🚀", layout="wide")
 
-# 2. رابط جدول البيانات الخاص بك
+# 2. رابط جدول البيانات
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
 
-# 3. تصميم الواجهة (CSS) لضمان وضوح الألوان وقسم "قيم فكرتك"
+# 3. تصميم الواجهة (CSS)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
     html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; }
     .stApp { background-color: #f8fafc; }
-    
-    /* تنسيق قسم قيم فكرتك لضمان وضوح النص */
-    .stExpander {
-        background-color: white !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 12px !important;
-    }
-    .stExpander label, .stExpander p, .stExpander div {
-        color: #1e293b !important;
-    }
     
     .hack-card {
         background: white;
@@ -31,7 +21,12 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         margin-bottom: 20px;
         border-right: 8px solid #1e3a8a;
+        position: relative;
     }
+    
+    /* أوسمة الحالة */
+    .status-available { background-color: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; float: left; }
+    .status-expired { background-color: #fee2e2; color: #991b1b; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; float: left; }
     
     .info-line { font-size: 16px; margin: 8px 0; color: #1e293b; }
     .info-label { color: #1e3a8a; font-weight: bold; }
@@ -59,7 +54,6 @@ def load_data():
 
 df = load_data()
 
-# العنوان الرئيسي
 st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
 
 # 5. قسم "قيم فكرتك"
@@ -72,8 +66,6 @@ with st.expander("💡 أيقونة: قيم فكرتك للهاكثون"):
             if user_idea:
                 st.balloons()
                 st.success(f"فكرة '{user_idea}' رائعة ومناسبة لـ {target_h}! مهاراتك يا ريماس في UI/UX ستجعلها مميزة.")
-            else:
-                st.warning("الرجاء كتابة فكرة أولاً.")
 
 # 6. القائمة الجانبية
 with st.sidebar:
@@ -84,16 +76,26 @@ with st.sidebar:
         sel_loc = st.selectbox("📍 ابحث حسب المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
         sel_major = st.selectbox("🎯 ابحث حسب التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
 
-# 7. عرض النتائج من جدولك
+# 7. عرض النتائج
 if df is not None:
+    # ترتيب البيانات ليظهر "متاح" أولاً
     filt_df = df.copy()
     if sel_loc != "الكل": filt_df = filt_df[filt_df['Location'] == sel_loc]
     if sel_major != "الكل": filt_df = filt_df[filt_df['major'] == sel_major]
 
     for _, row in filt_df.iterrows():
+        # تحديد الحالة بناءً على التاريخ أو النص
+        status = str(row.get('Data', '')).strip()
+        is_expired = "2026" not in status and "متاح" not in status and "قريبا" not in status # معيار بسيط للتوضيح
+        
+        # يمكنك جعلها أدق لو أضفتِ عمود "الحالة" في الجدول
+        status_class = "status-expired" if "منتهي" in status else "status-available"
+        status_text = "🚫 انتهى" if "منتهي" in status else "✅ متاح"
+
         with st.container():
             st.markdown(f"""
             <div class="hack-card">
+                <div class="{status_class}">{status_text}</div>
                 <h2 style='color: #1e40af; margin-top:0;'>{row.get('Name', 'نشاط تقني')}</h2>
                 <div class="info-line"><span class="info-label">📍 المدينة:</span> {row.get('Location', 'غير محدد')}</div>
                 <div class="info-line"><span class="info-label">🏢 الجهة:</span> {row.get('Organizaion', 'غير محدد')}</div>
@@ -106,7 +108,7 @@ if df is not None:
             """, unsafe_allow_html=True)
             
             link = str(row.get('Link', '')).strip()
-            if link and link != 'nan' and len(link) > 5:
+            if link and link != 'nan' and "منتهي" not in status:
                 actual_link = link if link.startswith('http') else f"https://{link}"
                 st.link_button(f"🔗 سجل الآن في {row.get('Name')}", actual_link)
             st.markdown("<br>", unsafe_allow_html=True)
