@@ -1,92 +1,167 @@
 import streamlit as st
+import google.generativeai as genai
+from datetime import datetime
 import pandas as pd
 
-# 1. إعدادات الصفحة
-st.set_page_config(page_title="بوصلة الهاكثونات | ريماس الدوسري", page_icon="🚀", layout="wide")
+# 1. إعدادات الصفحة والهوية الاحترافية
+st.set_page_config(
+    page_title="بوصلة الهاكثونات | ريماس الدوسري",
+    page_icon="🎯",
+    layout="wide"
+)
 
-# 2. الرابط الخاص بالجدول
-SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?output=csv"
-
-# 3. تصميم الواجهة
+# 2. كود CSS المطور
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-    html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; }
-    .stApp { background-color: #ffffff; }
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .stAppDeployButton {display:none;}
+    
     .hack-card {
-        background: #ffffff;
+        background-color: #ffffff;
+        border-radius: 15px;
         padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        margin-bottom: 20px;
-        border: 1px solid #e2e8f0;
         border-right: 10px solid #1e3a8a;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
     }
-    .info-line { font-size: 18px; margin: 10px 0; color: #000000 !important; font-weight: 500; }
-    .info-label { color: #1e3a8a !important; font-weight: bold; }
-    .description-box {
-        background-color: #f8fafc;
-        padding: 15px;
-        border-radius: 8px;
-        font-size: 16px;
-        color: #1a202c !important;
+    .badge-timer {
+        background-color: #fff7ed;
+        color: #9a3412;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 0.8rem;
+    }
+    .success-banner {
+        background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 10px;
+    }
+    /* تنسيق زر لينكد إن */
+    .linkedin-btn {
+        display: inline-flex;
+        align-items: center;
+        background-color: #0077b5;
+        color: white !important;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: bold;
         margin-top: 10px;
-        border: 1px solid #e2e8f0;
+        transition: 0.3s;
+    }
+    .linkedin-btn:hover {
+        background-color: #005a87;
+        transform: scale(1.05);
     }
     </style>
     """, unsafe_allow_html=True)
 
-@st.cache_data(ttl=2)
-def load_data():
-    try:
-        data = pd.read_csv(SHEET_URL)
-        data.columns = data.columns.str.strip()
-        return data
-    except: return None
+# --- العنوان الرئيسي ---
+st.title("🚀 بوصلة الهاكثونات الذكية")
+st.markdown("#### منصة الابتكار المتكاملة - تطوير المهندسة ريماس الدوسري")
 
-df = load_data()
+# 3. نظام التبويبات
+tab_hacks, tab_ai_chat, tab_ai_critic, tab_teams, tab_tools, tab_success, tab_admin = st.tabs([
+    "🔥 الهاكثونات", "💬 مساعد البوصلة", "🧠 محلل الأفكار", "👥 صانع الفرق", "🎒 الحقيبة", "🏆 النجاحات", "🔐 الإدارة"
+])
 
-# 4. العنوان
-st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
-
-# 5. القائمة الجانبية (هنا التعديل الجديد)
-with st.sidebar:
-    # رسالة تعليمية لتحويل الموقع لتطبيق
-    st.success("💡 **لتحويله إلى تطبيق:**\n\nاضغط على **'مشاركة'** ثم **'إضافة للشاشة الرئيسية'** ليظهر كأيقونة تطبيق مستقلة على جوالك!")
-    
-    st.markdown("---")
-    st.markdown("<h2 style='text-align:center;'>🔍 البحث</h2>", unsafe_allow_html=True)
-    if df is not None:
-        sel_major = st.selectbox("🎯 التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
-        sel_loc = st.selectbox("📍 المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
-    
-    st.markdown("---")
-    st.markdown("<div style='text-align:center;'><b>تطوير:</b><br>ريماس الدوسري</div>", unsafe_allow_html=True)
-    st.link_button("🔗 LinkedIn Profile", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
-
-# 6. عرض البيانات
-if df is not None:
-    filt_df = df.copy()
-    if sel_major != "الكل": filt_df = filt_df[filt_df['major'] == sel_major]
-    if sel_loc != "الكل": filt_df = filt_df[filt_df['Location'] == sel_loc]
-
-    for _, row in filt_df.iterrows():
-        if pd.isna(row.get('Name')): continue
-        with st.container():
+# --- 1. الهاكثونات ---
+with tab_hacks:
+    st.subheader("الهاكثونات المتاحة حالياً")
+    hacks_data = [
+        {"name": "هاكثون الطاقة المتجددة", "date": "2026-06-10", "loc": "الرياض", "likes": 42},
+        {"name": "تحدي الابتكار السيبراني", "date": "2026-04-20", "loc": "الخرج"}
+    ]
+    for h in hacks_data:
+        end_date = datetime.strptime(h['date'], "%Y-%m-%d").date()
+        days_left = (end_date - datetime.now().date()).days
+        if days_left >= 0:
             st.markdown(f"""
-            <div class="hack-card">
-                <h2 style='color: #1e3a8a; margin:0;'>{row.get('Name')}</h2>
-                <div class="info-line"><span class="info-label">📍 المدينة:</span> {row.get('Location')}</div>
-                <div class="info-line"><span class="info-label">🏢 الجهة:</span> {row.get('Organizaion')}</div>
-                <div class="info-line"><span class="info-label">🎯 التخصص:</span> {row.get('major')}</div>
-                <div class="info-line"><span class="info-label">📅 التاريخ:</span> {row.get('Data')}</div>
-                <div class="description-box">
-                    <b>📝 التفاصيل:</b><br>{row.get('Description')}
+                <div class="hack-card">
+                    <span class="badge-timer">⏳ فرصة أخيرة: متبقي {days_left} أيام</span>
+                    <h3>{h['name']}</h3>
+                    <p>📍 {h['loc']} | 📅 ينتهي في: {h['date']}</p>
                 </div>
-            </div>
             """, unsafe_allow_html=True)
-            
-            link = str(row.get('Link', '')).strip()
-            if link and link != 'nan':
-                st.link_button(f"🔗 سجل الآن", link if link.startswith('http') else f"https://{link}")
-            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button(f"❤️ تصويت جماعي ({h.get('likes', 0)})", key=h['name']):
+                st.toast(f"تم تسجيل إعجابك بـ {h['name']}")
+
+# --- 2. الشات بوت ---
+with tab_ai_chat:
+    st.subheader("💬 اسألي مساعد ريماس الذكي")
+    if "messages" not in st.session_state: st.session_state.messages = []
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]): st.markdown(msg["content"])
+    if p := st.chat_input("كيف أقدر أساعدك؟"):
+        st.session_state.messages.append({"role": "user", "content": p})
+        with st.chat_message("user"): st.markdown(p)
+        with st.chat_message("assistant"):
+            response = f"أهلاً بك! بصفتي مساعد المهندسة ريماس، سؤالك عن '{p}' محل اهتمامنا."
+            st.markdown(response)
+            st.session_state.messages.append({"role": "assistant", "content": response})
+
+# --- 3. محلل الأفكار ---
+with tab_ai_critic:
+    st.subheader("🧠 قيم فكرتك")
+    idea = st.text_area("اكتبي فكرتك هنا:")
+    if st.button("حلل فكرتي 🚀"):
+        st.info("تحليل ذكي: فكرة ممتازة! حاولي ربطها برؤية 2030 لزيادة فرص الفوز.")
+
+# --- 4. صانع الفرق ---
+with tab_teams:
+    st.subheader("👥 ابحث عن فريق")
+    col_x, col_y = st.columns(2)
+    with col_x:
+        st.text_input("الاسم:")
+        st.multiselect("المهارات:", ["Python", "UI/UX", "AI"])
+        st.button("تسجيل اهتمام")
+    with col_y:
+        st.info("سارة (UI/UX) - متاحة للتعاون")
+
+# --- 5. حقيبة الهاكثون ---
+with tab_tools:
+    st.subheader("🎒 أدواتك للنجاح")
+    st.markdown("- **التصميم:** Figma\n- **البرمجة:** GitHub & Streamlit\n- **الذكاء:** Gemini API")
+
+# --- 6. قصص النجاح (مع زر LinkedIn) ---
+with tab_success:
+    st.subheader("🏆 بصمة ريماس في الابتكار")
+    st.markdown("""
+        <div class="success-banner">
+            <h4>🌟 إنجاز معسكر IBM</h4>
+            <p>تطوير وكلاء ذكاء اصطناعي متميزين.</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # زر لينكد إن لفتح التطبيق مباشرة
+    st.markdown("""
+        <a href="linkedin://in/rimas-aldosari" class="linkedin-btn">
+            <span>🔗 توثيق الإنجاز على LinkedIn</span>
+        </a>
+    """, unsafe_allow_html=True)
+
+# --- 7. الإدارة ---
+with tab_admin:
+    st.subheader("🔐 لوحة التحكم")
+    pwd = st.text_input("كلمة المرور:", type="password")
+    if pwd == "Remas2026":
+        st.success("أهلاً ريماس!")
+        with st.form("admin_form"):
+            st.text_input("اسم الهاكثون")
+            st.form_submit_button("إضافة")
+
+# --- الفوتر مع رابط LinkedIn الذكي ---
+st.markdown("---")
+st.markdown(f"""
+    <div style="text-align: center;">
+        <p style="color: #888;">تم التطوير بواسطة ريماس الدوسري | جامعة الأمير سطام بن عبدالعزيز</p>
+        <a href="linkedin://in/rimas-aldosari" style="text-decoration: none; color: #0077b5; font-weight: bold;">
+            LinkedIn Profile 🔗
+        </a>
+    </div>
+""", unsafe_allow_html=True)
