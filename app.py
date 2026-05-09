@@ -7,13 +7,31 @@ st.set_page_config(page_title="بوصلة الهاكثونات | ريماس ال
 # 2. رابط جدول البيانات
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
 
-# 3. تصميم الواجهة (CSS)
+# 3. تصميم الواجهة (CSS) - تم تحديثه لإخفاء العلامات المائية وتحسين الألوان
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
     html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; }
+    
+    /* إخفاء شريط القائمة السفلي وشعار ستريم ليت */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
     .stApp { background-color: #f8fafc; }
     
+    /* تحسين وضوح نصوص القائمة الجانبية */
+    [data-testid="stSidebar"] {
+        background-color: #111827; /* خلفية داكنة احترافية */
+    }
+    [data-testid="stSidebar"] .stMarkdown p, 
+    [data-testid="stSidebar"] label {
+        color: #FFFFFF !important; /* لون أبيض ناصع للنصوص */
+    }
+    [data-testid="stSidebar"] h3 {
+        color: #FFFFFF !important;
+    }
+
     .hack-card {
         background: white;
         padding: 25px;
@@ -24,7 +42,6 @@ st.markdown("""
         position: relative;
     }
     
-    /* أوسمة الحالة */
     .status-available { background-color: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; float: left; }
     .status-expired { background-color: #fee2e2; color: #991b1b; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; float: left; }
     
@@ -65,11 +82,11 @@ with st.expander("💡 أيقونة: قيم فكرتك للهاكثون"):
         if st.button("تحليل الفكرة"):
             if user_idea:
                 st.balloons()
-                st.success(f"فكرة '{user_idea}' رائعة ومناسبة لـ {target_h}! مهاراتك يا ريماس في UI/UX ستجعلها مميزة.")
+                st.success(f"فكرة '{user_idea}' رائعة ومناسبة لـ {target_h}! مهاراتك في الابتكار ستجعلها مميزة.")
 
-# 6. القائمة الجانبية
+# 6. القائمة الجانبية (بدون لقب المهندسة وبألوان واضحة)
 with st.sidebar:
-    st.markdown("<div style='text-align:center;'><b>تطوير المهندسة:</b><br>ريماس الدوسري</div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center; color:white;'><h3>تطوير:</h3><h2>ريماس الدوسري</h2></div>", unsafe_allow_html=True)
     st.link_button("🔗 LinkedIn Profile", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
     st.markdown("---")
     if df is not None:
@@ -78,17 +95,12 @@ with st.sidebar:
 
 # 7. عرض النتائج
 if df is not None:
-    # ترتيب البيانات ليظهر "متاح" أولاً
     filt_df = df.copy()
     if sel_loc != "الكل": filt_df = filt_df[filt_df['Location'] == sel_loc]
     if sel_major != "الكل": filt_df = filt_df[filt_df['major'] == sel_major]
 
     for _, row in filt_df.iterrows():
-        # تحديد الحالة بناءً على التاريخ أو النص
         status = str(row.get('Data', '')).strip()
-        is_expired = "2026" not in status and "متاح" not in status and "قريبا" not in status # معيار بسيط للتوضيح
-        
-        # يمكنك جعلها أدق لو أضفتِ عمود "الحالة" في الجدول
         status_class = "status-expired" if "منتهي" in status else "status-available"
         status_text = "🚫 انتهى" if "منتهي" in status else "✅ متاح"
 
