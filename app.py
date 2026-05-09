@@ -7,29 +7,32 @@ st.set_page_config(page_title="بوصلة الهاكثونات | ريماس ال
 # 2. رابط جدول البيانات
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
 
-# 3. تصميم الواجهة (CSS) - الألوان الأصلية مع إخفاء الأشرطة
+# 3. تصميم الواجهة (CSS) - الألوان الغامقة وإخفاء الأشرطة إجبارياً
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
     html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; }
     
-    /* إخفاء كل أدوات ستريم ليت والشريط السفلي (التاج والإدارة) */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* إخفاء كل أدوات الإدارة والأشرطة السفلية والشعارات */
+    #MainMenu {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    header {visibility: hidden !important;}
     div[data-testid="stStatusWidget"] { display: none !important; }
     .viewerBadge_container__1QSob { display: none !important; }
     .stDeployButton { display: none !important; }
+    [data-testid="stActionButton"] { display: none !important; }
     
-    /* لون خلفية التطبيق الأساسية */
+    /* لون خلفية التطبيق */
     .stApp { background-color: #f8fafc; }
     
-    /* ألوان القائمة الجانبية الداكنة (نفس اللون اللي أعجبك) */
+    /* لون القائمة الجانبية (نفس اللون الغامق اللي كان عندك) */
     [data-testid="stSidebar"] {
-        background-color: #0E1117 !important; 
+        background-color: #0E1117 !important;
+        min-width: 300px;
     }
     
-    /* جعل الخطوط بيضاء تماماً وواضحة في القائمة الجانبية */
+    /* توحيد ألوان النصوص في القائمة الجانبية للأبيض */
+    [data-testid="stSidebar"] section[data-testid="stSidebarNav"] { display: none; }
     [data-testid="stSidebar"] .stMarkdown p, 
     [data-testid="stSidebar"] label,
     [data-testid="stSidebar"] h3,
@@ -37,7 +40,7 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* تنسيق كروت الهاكثونات */
+    /* تنسيق كروت الهاكثونات والمعسكرات */
     .hack-card {
         background: white;
         padding: 25px;
@@ -70,7 +73,7 @@ st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة ال�
 
 # 4. القائمة الجانبية (Sidebar)
 with st.sidebar:
-    # الاسم بدون كلمة المهندسة
+    # الاسم المحدث بدون كلمة المهندسة وبنفس ستايلك القديم
     st.markdown("<div style='text-align:center;'><h3>تطوير:</h3><h2>ريماس الدوسري</h2></div>", unsafe_allow_html=True)
     st.link_button("🔗 LinkedIn Profile", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
     st.markdown("---")
@@ -85,7 +88,7 @@ with st.sidebar:
         if st.button("تحليل الفكرة"):
             if user_idea:
                 st.balloons()
-                st.success(f"فكرة رائعة يا ريماس!")
+                st.success(f"تحليل رائع يا ريماس!")
 
     st.markdown("---")
     if df is not None:
