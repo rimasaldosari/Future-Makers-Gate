@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # 1. إعدادات الصفحة
-st.set_page_config(page_title="بوصلة الهاكثونات | ريماس الدوسري", page_icon="🚀", layout="wide")
+st.set_config(page_title="بوصلة الهاكثونات | ريماس الدوسري", page_icon="🚀", layout="wide")
 
 # 2. رابط جدول البيانات (رابطك المباشر)
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
@@ -14,7 +14,16 @@ st.markdown("""
     html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; }
     .stApp { background-color: #f8fafc; }
     
-    /* تصميم الكروت */
+    /* تنسيق قسم قيم فكرتك ليصبح النص واضحاً */
+    .stExpander {
+        background-color: white !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+    }
+    .stExpander label, .stExpander p, .stExpander div {
+        color: #1e293b !important; /* لون كحلي غامق جداً وواضح */
+    }
+    
     .hack-card {
         background: white;
         padding: 25px;
@@ -24,27 +33,17 @@ st.markdown("""
         border-right: 8px solid #1e3a8a;
     }
     
-    /* لون النصوص داخل الكرت */
-    .info-line { font-size: 16px; margin: 8px 0; color: #1e293b; } /* لون كحلي غامق وواضح */
+    .info-line { font-size: 16px; margin: 8px 0; color: #1e293b; }
     .info-label { color: #1e3a8a; font-weight: bold; }
     
-    /* صندوق الوصف */
     .description-box {
         background-color: #f1f5f9;
         padding: 15px;
         border-radius: 10px;
         font-size: 15px;
-        color: #0f172a; /* لون نص أغمق للوصف لسهولة القراءة */
+        color: #0f172a;
         margin-top: 15px;
         border-right: 4px solid #94a3b8;
-    }
-    
-    /* زر التسجيل */
-    .stButton>button {
-        border-radius: 10px;
-        background-color: #1e3a8a !important;
-        color: white !important;
-        font-weight: bold;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -60,19 +59,18 @@ def load_data():
 
 df = load_data()
 
-# 4. العنوان الرئيسي
 st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
 
-# 5. قسم "قيم فكرتك" (الميزة التفاعلية)
+# 5. قسم "قيم فكرتك" بعد تعديل ألوان الخط
 with st.expander("💡 أيقونة: قيم فكرتك للهاكثون"):
-    st.markdown("### 📊 محلل الابتكار الشخصي")
-    user_idea = st.text_input("ما هي فكرتك الجديدة؟")
+    st.markdown("<h3 style='color:#1e3a8a;'>📊 محلل الابتكار الشخصي</h3>", unsafe_allow_html=True)
+    user_idea = st.text_input("ما هي فكرتك الجديدة؟", placeholder="اكتبي فكرتك هنا...")
     if df is not None:
         target_h = st.selectbox("اختر الهاكثون المستهدف لفكرتك:", df['Name'].unique())
         if st.button("تحليل الفكرة"):
             if user_idea:
                 st.balloons()
-                st.success(f"فكرة '{user_idea}' رائعة ومناسبة جداً لـ {target_h}! تذكري يا ريماس أن مهاراتك في UI/UX وتطوير AI ستجعل مشروعك يبرز في هذا التحدي.")
+                st.success(f"فكرة '{user_idea}' رائعة ومناسبة لـ {target_h}! مهاراتك يا ريماس في UI/UX ستجعلها مميزة.")
             else:
                 st.warning("الرجاء كتابة فكرة أولاً.")
 
