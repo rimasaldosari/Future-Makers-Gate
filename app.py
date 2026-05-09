@@ -1,143 +1,69 @@
 import streamlit as st
-import pandas as pd
 
 # إعدادات الصفحة
 st.set_page_config(page_title="بوصلة الهاكثونات والمعسكرات", layout="wide")
 
-# تصميم CSS بألوان فاتحة وخطوط واضحة جداً
+# تصميم CSS مطابق لصورة تطبيقك مع تحسين الوضوح
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
-    html, body, [class*="st-"] { font-family: 'Tajawal', sans-serif; direction: rtl; text-align: right; }
-    
-    /* تغيير الخلفية للأبيض/الفاتح */
-    .main { background-color: #f8fafc; color: #1e293b; }
-    
-    .card {
-        border: 1px solid #e2e8f0;
+    .main { background-color: #0e1117; color: white; font-family: 'Tajawal', sans-serif; }
+    .event-card {
+        background-color: #ffffff;
         border-radius: 15px;
         padding: 25px;
         margin-bottom: 20px;
-        background-color: #ffffff;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        border-right: 8px solid #1e3a8a;
+        color: #000000;
+        border-left: 10px solid #1e3a8a;
     }
-    
-    .card-title { color: #1e3a8a; font-size: 26px; font-weight: bold; margin-bottom: 15px; }
-    
-    .status-tag {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: bold;
-    }
-    .active { background-color: #dcfce7; color: #166534; }
-    .expired { background-color: #fee2e2; color: #991b1b; }
-    
-    .details-box { 
-        background-color: #f1f5f9; 
-        color: #334155; 
-        padding: 18px; 
-        border-radius: 10px; 
-        margin-top: 15px; 
-        border: 1px solid #e2e8f0;
-        line-height: 1.8;
-        font-size: 16px;
-    }
-    
-    .btn-register {
-        background-color: #1e3a8a;
-        color: white !important;
-        padding: 10px 25px;
-        border-radius: 8px;
-        text-decoration: none;
-        display: inline-block;
-        font-weight: bold;
-    }
+    .status-badge { background-color: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 8px; font-weight: bold; float: right; }
+    .card-header { color: #1e3a8a; font-size: 24px; font-weight: bold; margin-bottom: 10px; text-align: left; }
+    .info-row { color: #4b5563; margin-bottom: 15px; font-size: 16px; text-align: left; }
+    .details-box { background-color: #f3f4f6; padding: 15px; border-radius: 10px; color: #374151; text-align: right; }
+    .reg-button { background-color: #1e3a8a; color: white !important; padding: 8px 25px; border-radius: 8px; text-decoration: none; display: inline-block; margin-top: 15px; }
+    .linkedin-link { background-color: #0077b5; color: white !important; padding: 10px; border-radius: 5px; text-decoration: none; display: block; text-align: center; margin-top: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# قاعدة بيانات شاملة لكل الهاكثونات والمعسكرات (التي ذكرتيها سابقاً)
-data = [
-    {"title": "هاكثون بلاك هات", "city": "الرياض", "org": "الاتحاد السعودي", "major": "أمن سيبراني", "status": "متاح", "details": "أكبر فعالية تقنية في المنطقة لتبادل الخبرات ومواجهة تحديات الأمن السيبراني العالمية."},
-    {"title": "معسكرات طويق", "city": "الرياض", "org": "أكاديمية طويق", "major": "تقنيات متقدمة", "status": "متاح", "details": "معسكرات احترافية مكثفة لتأهيل الكوادر الوطنية في مجالات البرمجة والذكاء الاصطناعي."},
-    {"title": "هاكثون الطاقة 2026", "city": "الظهران", "org": "وزارة الطاقة", "major": "هندسة وحاسب", "status": "متاح", "details": "ابتكار حلول تقنية لمستقبل الطاقة المستدامة وتحسين كفاءة الاستهلاك."},
-    {"title": "معسكر IBM للوكلاء الذكيين", "city": "عن بعد", "org": "IBM SkillsBuild", "major": "ذكاء اصطناعي", "status": "منتهي", "details": "تدريب مكثف على بناء وتطوير الوكلاء الذكيين باستخدام تقنيات IBM."},
-    {"title": "هاكثون الذكاء الاصطناعي", "city": "جدة", "org": "سدايا", "major": "AI", "status": "منتهي", "details": "تطوير نماذج ذكاء اصطناعي لخدمة القطاعات الحيوية في المملكة."},
-    {"title": "معسكر الذكاء الاصطناعي التوليدي", "city": "الخرج", "org": "جامعة سطام", "major": "نظم معلومات", "status": "منتهي", "details": "التعمق في نماذج LLM وكيفية دمجها في التطبيقات البرمجية."}
+# البيانات كاملة كما وردت في جدولك (image_9.png)
+events = [
+    {"name": "هاكثون بلاك هات", "org": "الاتحاد السعودي", "major": "أمن سيبراني", "date": "ديسمبر 2026", "link": "https://blackhatsaudi.com", "loc": "الرياض"},
+    {"name": "معسكرات طويق", "org": "أكاديمية طويق", "major": "ذكاء اصطناعي", "date": "متاح الآن", "link": "https://tuwaiq.edu.sa", "loc": "الرياض"},
+    {"name": "هاكثون البيانات", "org": "الهيئة العامة للإحصاء", "major": "علوم بيانات", "date": "متاح الآن", "link": "https://www.gastat.gov.sa", "loc": "الرياض"},
+    {"name": "معسكر الابتكار", "org": "مبادرات الابتكار", "major": "ابتكار وتقنية", "date": "مايو 2026", "link": "https://3502354586459", "loc": "عام"},
+    {"name": "هاكثون الصناعة", "org": "صندوق التنمية الصناعية", "major": "هندسة وتقنية", "date": "قريباً 2026", "link": "https://www.sidf.gov.sa", "loc": "الرياض"},
+    {"name": "برنامج نخب", "org": "صندوق التنمية الصناعية", "major": "هندسة", "date": "متاح الآن", "link": "https://www.sidf.gov.sa", "loc": "عام"},
+    {"name": "هاكثون سطام", "org": "جامعة سطام", "major": "الكل", "date": "مايو 2026", "link": "https://psau.edu.sa", "loc": "سطام"},
+    {"name": "هاكثون الحج", "org": "مركز الدراسات والبحوث", "major": "تقنية وخدمات", "date": "أغسطس 2026", "link": "https://hajhackathon.sa", "loc": "جدة"},
+    {"name": "هاكثون نيوم", "org": "شركة نيوم", "major": "استدامة وتقنية", "date": "أكتوبر 2026", "link": "https://www.neom.com", "loc": "نيوم"},
+    {"name": "هاكثون الدرعية", "org": "هيئة تطوير الدرعية", "major": "تراث وتقنية", "date": "سبتمبر 2026", "link": "https://dgda.gov.sa", "loc": "الدرعية"},
+    {"name": "هاكثون سيسكو العالمي", "org": "Cisco", "major": "شبكات وأمن", "date": "متاح الآن", "link": "https://www.cisco.com", "loc": "عن بعد"}
 ]
 
-# العناوين
-st.markdown('<h1 style="text-align: center; color: #1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
-st.markdown('<p style="text-align: center; color: #64748b; font-size: 1.2em;">تطوير ريماس الدوسري | جامعة الأمير سطام بن عبدالعزيز</p>', unsafe_allow_html=True)
-
-col_main, col_side = st.columns([3, 1])
-
-with col_main:
-    # فلترة العرض
-    view_option = st.segmented_control("عرض الفعاليات:", ["الكل", "المتاحة", "الأرشيف"], default="الكل")
-    
-    for item in data:
-        if view_option == "المتاحة" and item["status"] == "منتهي": continue
-        if view_option == "الأرشيف" and item["status"] == "متاح": continue
-        
-        status_class = "active" if item["status"] == "متاح" else "expired"
-        status_text = "✅ متاح للتسجيل" if item["status"] == "متاح" else "🚫 انتهى التقديم"
-        
-        st.markdown(f"""
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="card-title">{item['title']}</div>
-                <span class="status-tag {status_class}">{status_text}</span>
-            </div>
-            <div style="font-size: 18px; color: #475569; margin: 10px 0;">
-                📍 <b>{item['city']}</b> | 🏢 <b>{item['org']}</b> | 🎯 <b>{item['major']}</b>
-            </div>
-            <div class="details-box">
-                <b>📝 التفاصيل:</b><br>{item['details']}
-            </div>
-            <div style="text-align: left; margin-top: 15px;">
-                {"<a href='#' class='btn-register'>سجل الآن 🔗</a>" if item['status'] == 'متاح' else ""}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # قسم قيم فكرتك بتصميم واضح وردود مفصلة
-    st.markdown("---")
-    with st.expander("💡 قيم فكرتك (محلل الابتكار)"):
-        st.markdown("### حلل فكرتك بناءً على موقعك وتخصصك")
-        idea_title = st.text_input("عنوان الفكرة:")
-        c1, c2 = st.columns(2)
-        with c1: st.text_input("المدينة:", value="الخرج")
-        with c2: st.text_input("التخصص:", value="هندسة وعلوم الحاسب")
-        
-        if st.button("بدء التحليل الذكي"):
-            st.balloons()
-            st.success(f"**تم تحليل فكرة: {idea_title}**")
-            st.markdown(f"""
-            <div style="background-color: #f8fafc; padding: 20px; border-radius: 10px; border: 1px dashed #1e3a8a;">
-                <h4>📊 نتائج التقرير:</h4>
-                <ul>
-                    <li><b>مدى الابتكار:</b> الفكرة قوية وتغطي فجوة تقنية في سوق {item['city']}.</li>
-                    <li><b>التوصية الأكاديمية:</b> تخصصك في البرمجيات يدعم تنفيذ هذه الفكرة تقنياً بشكل ممتاز.</li>
-                    <li><b>الخطوة القادمة:</b> ننصحك بالانضمام إلى <b>معسكرات طويق</b> القادمة لتطوير النموذج الأولي.</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+col_side, col_main = st.columns([1, 3])
 
 with col_side:
-    st.markdown("<div style='background-color: white; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("### 🔍 تصفية سريعة")
-    st.selectbox("حسب التخصص:", ["الكل", "أمن سيبراني", "ذكاء اصطناعي", "هندسة"])
-    st.selectbox("حسب المدينة:", ["الكل", "الرياض", "الخرج", "جدة"])
+    st.selectbox("حسب التخصص:", ["الكل"] + list(set(e['major'] for e in events)))
+    st.selectbox("حسب المدينة:", ["الكل"] + list(set(e['loc'] for e in events)))
     st.markdown("---")
-    st.write("**تطوير:**")
-    st.write("**ريماس الدوسري**")
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown(f"**تطوير:**\n\nريماس الدوسري")
+    st.markdown('<a href="https://www.linkedin.com/in/rimas-aldosari" class="linkedin-link">LinkedIn Profile 🔗</a>', unsafe_allow_html=True)
 
-# ميزة التعديل الجدولي كما طلبتِ
-st.markdown("---")
-if st.checkbox("🛠️ فتح لوحة تعديل البيانات (الجدول البياني)"):
-    st.info("يمكنك تعديل البيانات هنا لتظهر في الكروت أعلاه مباشرة.")
-    df = pd.DataFrame(data)
-    edited_df = st.data_editor(df, num_rows="dynamic")
+with col_main:
+    st.markdown('<h1 style="color: #58a6ff; text-align: center;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
+    
+    for ev in events:
+        st.markdown(f"""
+        <div class="event-card">
+            <div class="status-badge">✅ متاح</div>
+            <div class="card-header">{ev['name']}</div>
+            <div class="info-row">
+                📍 {ev['loc']} | 🏢 {ev['org']} | 🎯 {ev['major']} | 📅 {ev['date']}
+            </div>
+            <div class="details-box">
+                <b>🔗 رابط التقديم:</b> {ev['link']}
+            </div>
+            <a href="{ev['link']}" class="reg-button">🔗 سجل الآن</a>
+        </div>
+        """, unsafe_allow_html=True)
