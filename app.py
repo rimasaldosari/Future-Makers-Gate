@@ -7,26 +7,29 @@ st.set_page_config(page_title="بوصلة الهاكثونات | ريماس ال
 # 2. رابط جدول البيانات
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
 
-# 3. تصميم الواجهة (CSS)
+# 3. تصميم الواجهة (CSS) - تم التحديث لإخفاء الأشرطة والأدوات الجانبية
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
     html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; }
     
-    /* إخفاء شريط القائمة السفلي وشعار ستريم ليت لبراند خاص */
+    /* إخفاء شريط القائمة السفلي، شعار ستريم ليت، وأدوات الإدارة */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    div[data-testid="stStatusWidget"] { display: none; }
+    .viewerBadge_container__1QSob { display: none !important; }
+    [data-testid="stCustomComponentV1"] { display: none !important; }
     
     .stApp { background-color: #f8fafc; }
     
-    /* تنسيق القائمة الجانبية (Sidebar) لبراند ريماس */
+    /* تنسيق القائمة الجانبية (Sidebar) */
     [data-testid="stSidebar"] {
-        background-color: #111827; /* خلفية داكنة احترافية */
+        background-color: #111827; 
     }
     [data-testid="stSidebar"] .stMarkdown p, 
     [data-testid="stSidebar"] label {
-        color: #FFFFFF !important; /* لون أبيض ناصع للنصوص */
+        color: #FFFFFF !important;
     }
     [data-testid="stSidebar"] h3 {
         color: #FFFFFF !important;
@@ -34,11 +37,10 @@ st.markdown("""
     }
     [data-testid="stSidebar"] h2 {
         color: #FFFFFF !important;
-        margin-top: 10px;
-        margin-bottom: 20px;
+        margin-top: 5px;
     }
 
-    /* تنسيق كروت الهاكثونات والمعسكرات */
+    /* تنسيق كروت الهاكثونات */
     .hack-card {
         background: white;
         padding: 25px;
@@ -46,17 +48,14 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         margin-bottom: 20px;
         border-right: 8px solid #1e3a8a;
-        position: relative;
     }
     
-    /* تنسيق أوسمة الحالة (متاح/منتهي) */
     .status-available { background-color: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; float: left; }
     .status-expired { background-color: #fee2e2; color: #991b1b; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; float: left; }
     
     .info-line { font-size: 16px; margin: 8px 0; color: #1e293b; }
     .info-label { color: #1e3a8a; font-weight: bold; }
     
-    /* تنسيق صندوق وصف الفرصة */
     .description-box {
         background-color: #f1f5f9;
         padding: 15px;
@@ -65,13 +64,6 @@ st.markdown("""
         color: #0f172a;
         margin-top: 15px;
         border-right: 4px solid #94a3b8;
-    }
-
-    /* تنسيق مدخلات الفكرة لتحقيق التباين */
-    div[data-testid="stTextInput"] label, 
-    div[data-testid="stSelectbox"] label,
-    div[data-testid="stButton"] label {
-        color: #FFFFFF !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -87,45 +79,33 @@ def load_data():
 
 df = load_data()
 
-# 4. العنوان الرئيسي
 st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
 
-# 5. القائمة الجانبية (Sidebar) المحدثة
+# 4. القائمة الجانبية (Sidebar)
 with st.sidebar:
+    # تم حذف كلمة المهندسة هنا
     st.markdown("<div style='text-align:center;'><h3>تطوير:</h3><h2>ريماس الدوسري</h2></div>", unsafe_allow_html=True)
     st.link_button("🔗 LinkedIn Profile", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
     st.markdown("---")
     
-    # -------------------------------------------------------------------------
-    # قسم "قيم فكرتك" - الآن في القائمة الجانبية ليكون أوضح
-    # -------------------------------------------------------------------------
+    # قسم "قيم فكرتك"
     st.markdown("<h3 style='text-align:center; color:#FFD700 !important;'>💡 قيم فكرتك للهاكثون</h3>", unsafe_allow_html=True)
-    st.markdown("<h4 style='text-align:center; color:#FFFFFF;'>📊 محلل الابتكار الشخصي</h4>", unsafe_allow_html=True)
-    
     user_idea = st.text_input("ما هي فكرتك الجديدة؟", placeholder="اكتبي فكرتك هنا...", key="idea_input")
     
     if df is not None:
-        hackathon_names = df['Name'].unique().tolist()
-        target_h = st.selectbox("اختر الهاكثون المستهدف لفكرتك:", hackathon_names, key="hackathon_select")
-        
-        analyze_button = st.button("تحليل الفكرة")
-        
-        if analyze_button:
-            if user_idea and target_h:
+        hack_names = df['Name'].unique().tolist()
+        target_h = st.selectbox("اختر الهاكثون المستهدف:", hack_names, key="hack_select")
+        if st.button("تحليل الفكرة"):
+            if user_idea:
                 st.balloons()
-                st.success(f"فكرة '{user_idea}' رائعة ومناسبة لـ {target_h}! مهاراتك في UI/UX ستجعلها مميزة.")
-                st.markdown("---") # خط فاصل بعد التحليل
-            elif analyze_button and not user_idea:
-                st.warning("يرجى كتابة فكرتك أولاً لتتمكن من تحليلها.")
-    # -------------------------------------------------------------------------
+                st.success(f"فكرة '{user_idea}' رائعة ومناسبة لـ {target_h}! مهاراتك في التصميم ستجعلها مميزة.")
 
-    st.markdown("---") # خط فاصل بين الأقسام
-    
+    st.markdown("---")
     if df is not None:
-        sel_loc = st.selectbox("📍 ابحث حسب المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()), key="location_select")
-        sel_major = st.selectbox("🎯 ابحث حسب التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()), key="major_select")
+        sel_loc = st.selectbox("📍 ابحث حسب المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
+        sel_major = st.selectbox("🎯 ابحث حسب التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
 
-# 6. عرض النتائج (Cards)
+# 5. عرض النتائج
 if df is not None:
     filt_df = df.copy()
     if sel_loc != "الكل": filt_df = filt_df[filt_df['Location'] == sel_loc]
