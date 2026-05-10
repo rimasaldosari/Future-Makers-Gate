@@ -7,40 +7,13 @@ st.set_page_config(page_title="بوصلة الهاكثونات | ريماس ال
 # 2. رابط جدول البيانات
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
 
-# 3. تصميم الواجهة (CSS) - الألوان الغامقة وإخفاء الأشرطة إجبارياً
+# 3. تصميم الواجهة (CSS)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
     html, body, [class*="css"] { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; }
-    
-    /* إخفاء كل أدوات الإدارة والأشرطة السفلية والشعارات */
-    #MainMenu {visibility: hidden !important;}
-    footer {visibility: hidden !important;}
-    header {visibility: hidden !important;}
-    div[data-testid="stStatusWidget"] { display: none !important; }
-    .viewerBadge_container__1QSob { display: none !important; }
-    .stDeployButton { display: none !important; }
-    [data-testid="stActionButton"] { display: none !important; }
-    
-    /* لون خلفية التطبيق */
     .stApp { background-color: #f8fafc; }
     
-    /* لون القائمة الجانبية (نفس اللون الغامق اللي كان عندك) */
-    [data-testid="stSidebar"] {
-        background-color: #0E1117 !important;
-        min-width: 300px;
-    }
-    
-    /* توحيد ألوان النصوص في القائمة الجانبية للأبيض */
-    [data-testid="stSidebar"] section[data-testid="stSidebarNav"] { display: none; }
-    [data-testid="stSidebar"] .stMarkdown p, 
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] h3,
-    [data-testid="stSidebar"] h2 {
-        color: #FFFFFF !important;
-    }
-
-    /* تنسيق كروت الهاكثونات والمعسكرات */
     .hack-card {
         background: white;
         padding: 25px;
@@ -50,11 +23,19 @@ st.markdown("""
         border-right: 8px solid #1e3a8a;
     }
     
-    .status-available { background-color: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; float: left; }
-    .status-expired { background-color: #fee2e2; color: #991b1b; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; float: left; }
-    
+    .status-badge { background-color: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; float: left; }
     .info-line { font-size: 16px; margin: 8px 0; color: #1e293b; }
     .info-label { color: #1e3a8a; font-weight: bold; }
+    
+    .description-box {
+        background-color: #f1f5f9;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 15px;
+        color: #0f172a;
+        margin-top: 15px;
+        border-right: 4px solid #94a3b8;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -71,45 +52,37 @@ df = load_data()
 
 st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
 
-# 4. القائمة الجانبية (Sidebar)
-with st.sidebar:
-    # الاسم المحدث بدون كلمة المهندسة وبنفس ستايلك القديم
-    st.markdown("<div style='text-align:center;'><h3>تطوير:</h3><h2>ريماس الدوسري</h2></div>", unsafe_allow_html=True)
-    st.link_button("🔗 LinkedIn Profile", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
-    st.markdown("---")
-    
-    # قسم قيم فكرتك
-    st.markdown("<h3 style='text-align:center; color:#FFD700 !important;'>💡 قيم فكرتك للهاكثون</h3>", unsafe_allow_html=True)
-    user_idea = st.text_input("ما هي فكرتك الجديدة؟", placeholder="اكتبي فكرتك هنا...", key="idea_input")
-    
+# 5. قسم "قيم فكرتك"
+with st.expander("💡 أيقونة: قيم فكرتك للهاكثون"):
+    st.markdown("<h3 style='color:#1e3a8a;'>📊 محلل الابتكار الشخصي</h3>", unsafe_allow_html=True)
+    user_idea = st.text_input("ما هي فكرتك الجديدة؟", placeholder="اكتبي فكرتك هنا...")
     if df is not None:
-        hack_names = df['Name'].unique().tolist()
-        target_h = st.selectbox("اختر الهاكثون المستهدف:", hack_names, key="hack_select")
+        target_h = st.selectbox("اختر الهاكثون المستهدف لفكرتك:", df['Name'].unique())
         if st.button("تحليل الفكرة"):
             if user_idea:
                 st.balloons()
-                st.success(f"تحليل رائع يا ريماس!")
+                st.success(f"فكرة '{user_idea}' رائعة ومناسبة لـ {target_h}!")
 
+# 6. القائمة الجانبية
+with st.sidebar:
+    st.markdown("<div style='text-align:center;'><b>تطوير المهندسة:</b><br>ريماس الدوسري</div>", unsafe_allow_html=True)
+    st.link_button("🔗 LinkedIn Profile", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
     st.markdown("---")
     if df is not None:
-        sel_loc = st.selectbox("📍 ابحث حسب المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
-        sel_major = st.selectbox("🎯 ابحث حسب التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
+        sel_loc = st.selectbox("📍 حسب المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
+        sel_major = st.selectbox("🎯 حسب التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
 
-# 5. عرض النتائج
+# 7. عرض النتائج
 if df is not None:
     filt_df = df.copy()
     if sel_loc != "الكل": filt_df = filt_df[filt_df['Location'] == sel_loc]
     if sel_major != "الكل": filt_df = filt_df[filt_df['major'] == sel_major]
 
     for _, row in filt_df.iterrows():
-        status = str(row.get('Data', '')).strip()
-        status_class = "status-expired" if "منتهي" in status else "status-available"
-        status_text = "🚫 انتهى" if "منتهي" in status else "✅ متاح"
-
         with st.container():
             st.markdown(f"""
             <div class="hack-card">
-                <div class="{status_class}">{status_text}</div>
+                <div class="status-badge">✅ نشط</div>
                 <h2 style='color: #1e40af; margin-top:0;'>{row.get('Name', 'نشاط تقني')}</h2>
                 <div class="info-line"><span class="info-label">📍 المدينة:</span> {row.get('Location', 'غير محدد')}</div>
                 <div class="info-line"><span class="info-label">🏢 الجهة:</span> {row.get('Organizaion', 'غير محدد')}</div>
@@ -120,4 +93,13 @@ if df is not None:
                 </div>
             </div>
             """, unsafe_allow_html=True)
+            
+            # التأكد من ظهور الرابط بشكل صحيح
+            link = str(row.get('Link', '')).strip()
+            if link and link != 'nan' and len(link) > 5:
+                # إذا كان الرابط لا يبدأ بـ http، نقوم بإضافته
+                actual_link = link if link.startswith('http') else f"https://{link}"
+                st.link_button(f"🔗 اضغط هنا للتسجيل", actual_link)
+            else:
+                st.info("رابط التسجيل سيتم تحديثه قريباً")
             st.markdown("<br>", unsafe_allow_html=True)
