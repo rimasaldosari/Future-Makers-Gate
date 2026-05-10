@@ -210,7 +210,7 @@ if df is not None:
 
             link = str(row.get('Link', '')).strip()
             if link and link != 'nan' and len(link) > 5:
-                actual_link = link if link.startswith('http') else f"https://{link}"
+             actual_link = link if link.startswith('http') else f"https://{link}"
                 st.link_button("🔗 اضغط هنا للتسجيل", actual_link)
         else:
                 st.info("رابط التسجيل سيتم تحديثه قريباً")
