@@ -38,6 +38,14 @@ html, body, [class*="css"] {
     background-color: #f8fafc;
 }
 
+[data-testid="stSidebar"] {
+    background-color: #1e3a8a !important;
+}
+
+[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
 .hack-card {
     background: white;
     padding: 25px;
@@ -119,10 +127,17 @@ def load_data():
         data = pd.read_csv(SHEET_URL)
         data.columns = data.columns.str.strip()
         return data
-    except:
+    except Exception as e:
+        st.error(f"خطأ في تحميل البيانات: {e}")
         return None
 
 df = load_data()
+
+# تشخيص مؤقت
+if df is not None:
+    st.write(df.head())
+else:
+    st.error("❌ ما قدر يحمل البيانات من الشيت")
 
 # =========================================
 # الواجهة الرئيسية
@@ -155,11 +170,10 @@ with st.sidebar:
     st.markdown("""
     <div style='text-align:center; padding-bottom: 10px;'>
     <b style='font-size: 1.1em;'>تطوير:</b><br>
-    <span style='font-size: 1.3em; color: #1e3a8a; font-weight: bold;'>ريماس الدوسري</span>
+    <span style='font-size: 1.3em; font-weight: bold;'>ريماس الدوسري</span>
     </div>
     """, unsafe_allow_html=True)
 
-    # لينكدإن بدون فتح متصفح وسيط
     st.link_button("🔗 حسابي على LinkedIn", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
 
     st.markdown("---")
