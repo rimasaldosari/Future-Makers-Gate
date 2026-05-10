@@ -13,13 +13,12 @@ st.set_page_config(
 )
 
 # =========================================
-# CSS + إخفاء أدوات Streamlit
+# CSS
 # =========================================
 
 st.markdown("""
 <style>
 
-/* إخفاء عناصر Streamlit */
 #MainMenu { visibility: hidden; }
 header { visibility: hidden; }
 footer { visibility: hidden; }
@@ -27,7 +26,6 @@ footer { visibility: hidden; }
 [data-testid="stDecoration"] { display: none !important; }
 button[kind="header"] { display: none !important; }
 
-/* الخط والإعدادات العامة */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
 html, body, [class*="css"] {
@@ -40,7 +38,6 @@ html, body, [class*="css"] {
     background-color: #f8fafc;
 }
 
-/* كروت الهاكثونات المحدثة */
 .hack-card {
     background: white;
     padding: 25px;
@@ -64,7 +61,8 @@ html, body, [class*="css"] {
     border-radius: 8px;
     font-weight: bold;
     font-size: 14px;
-    float: left; /* لضمان ظهورها في الزاوية اليسرى */
+    display: inline-block;
+    margin-bottom: 10px;
 }
 
 .info-line {
@@ -86,31 +84,6 @@ html, body, [class*="css"] {
     color: #0f172a;
     margin-top: 15px;
     border-right: 4px solid #94a3b8;
-}
-
-/* زر لينكدإن الاحترافي */
-.linkedin-container {
-    text-decoration: none;
-    display: block;
-    margin-bottom: 20px;
-}
-
-.linkedin-btn {
-    background-color: #0A66C2;
-    color: white !important;
-    padding: 12px 16px;
-    border-radius: 12px;
-    text-align: center;
-    font-weight: bold;
-    transition: 0.3s;
-    cursor: pointer;
-    border: none;
-    display: block;
-}
-
-.linkedin-btn:hover {
-    transform: scale(1.02);
-    background-color: #004182;
 }
 
 .stats-box {
@@ -135,7 +108,7 @@ html, body, [class*="css"] {
 """, unsafe_allow_html=True)
 
 # =========================================
-# رابط البيانات وتجهيزها
+# رابط البيانات
 # =========================================
 
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
@@ -168,14 +141,14 @@ if df is not None:
     with col3:
         st.markdown(f'<div class="stats-box"><h2>🎯 {df["major"].nunique()}</h2><p>عدد التخصصات</p></div>', unsafe_allow_html=True)
 
-# الأدوات التفاعلية
+# مولد الأفكار
 st.markdown('<div class="ai-box"><h3>💡 مولد أفكار هاكثونية</h3></div>', unsafe_allow_html=True)
 if st.button("💡 ولّد فكرة جديدة"):
     ideas = ["تطبيق ذكي للمكفوفين", "منصة AI للصحة النفسية", "مساعد ذكي للفرص التدريبية"]
     st.success(random.choice(ideas))
 
 # =========================================
-# القائمة الجانبية (Sidebar)
+# القائمة الجانبية
 # =========================================
 
 with st.sidebar:
@@ -186,27 +159,22 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    # إصلاح رابط لينكدإن ليكون مباشراً وقابلاً للضغط
-    linkedin_link = "https://www.linkedin.com/in/rimas-aldosari-656a23375"
-    st.markdown(f"""
-    <a href="{linkedin_link}" target="_blank" class="linkedin-container">
-        <div class="linkedin-btn">🔗 حسابي على LinkedIn</div>
-    </a>
-    """, unsafe_allow_html=True)
+    # لينكدإن بدون فتح متصفح وسيط
+    st.link_button("🔗 حسابي على LinkedIn", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
 
     st.markdown("---")
-    
+
     if df is not None:
         sel_loc = st.selectbox("📍 حسب المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
         sel_major = st.selectbox("🎯 حسب التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
 
 # =========================================
-# عرض النتائج (إصلاح مشكلة ظهور الكود كـ Text)
+# عرض النتائج
 # =========================================
 
 if df is not None:
     filt_df = df.copy()
-    
+
     if search_term:
         filt_df = filt_df[filt_df.astype(str).apply(lambda row: row.str.contains(search_term, case=False).any(), axis=1)]
     if sel_loc != "الكل":
@@ -215,29 +183,27 @@ if df is not None:
         filt_df = filt_df[filt_df['major'] == sel_major]
 
     for _, row in filt_df.iterrows():
-        # استخدام st.markdown مع unsafe_allow_html=True لعرض البطاقة بدلاً من الكود النصي
-        card_content = f"""
-        <div class="hack-card">
-            <div class="status-badge">✅ نشط</div>
-            <h2 style='color:#1e40af; margin-top:0;'>{row.get('Name', 'نشاط تقني')}</h2>
-            <div class="info-line"><span class="info-label">📍 المدينة:</span> {row.get('Location', 'غير محدد')}</div>
-            <div class="info-line"><span class="info-label">🏢 الجهة:</span> {row.get('Organizaion', 'غير محدد')}</div>
-            <div class="info-line"><span class="info-label">🎯 التخصص:</span> {row.get('major', 'عام')}</div>
-            <div class="info-line"><span class="info-label">📅 التاريخ:</span> {row.get('Data', 'قريباً')}</div>
-            <div class="description-box">
-                <b>📝 عن الفرصة:</b><br>
-                {row.get('Description', 'لا يوجد وصف حالياً.')}
+        with st.container():
+            st.markdown(f"""
+            <div class="hack-card">
+                <span class="status-badge">✅ نشط</span>
+                <h2 style='color:#1e40af; margin-top:8px;'>{row.get('Name', 'نشاط تقني')}</h2>
+                <p class="info-line"><span class="info-label">📍 المدينة:</span> {row.get('Location', 'غير محدد')}</p>
+                <p class="info-line"><span class="info-label">🏢 الجهة:</span> {row.get('Organizaion', 'غير محدد')}</p>
+                <p class="info-line"><span class="info-label">🎯 التخصص:</span> {row.get('major', 'عام')}</p>
+                <p class="info-line"><span class="info-label">📅 التاريخ:</span> {row.get('Data', 'قريباً')}</p>
+                <div class="description-box">
+                    <b>📝 عن الفرصة:</b><br>
+                    {row.get('Description', 'لا يوجد وصف.')}
+                </div>
             </div>
-        </div>
-        """
-        st.markdown(card_content, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
-        # زر التسجيل
-        link = str(row.get('Link', '')).strip()
-        if link and link != 'nan' and len(link) > 5:
-            actual_link = link if link.startswith('http') else f"https://{link}"
-            st.link_button("🔗 اضغط هنا للتسجيل", actual_link)
-        else:
-            st.info("رابط التسجيل سيتم تحديثه قريباً")
-        
-        st.markdown("<br>", unsafe_allow_html=True)
+            link = str(row.get('Link', '')).strip()
+            if link and link != 'nan' and len(link) > 5:
+                actual_link = link if link.startswith('http') else f"https://{link}"
+                st.link_button("🔗 اضغط هنا للتسجيل", actual_link)
+            else:
+                st.info("رابط التسجيل سيتم تحديثه قريباً")
+
+            st.markdown("<br>", unsafe_allow_html=True)
