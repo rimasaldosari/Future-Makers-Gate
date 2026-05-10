@@ -2,19 +2,11 @@ import streamlit as st
 import pandas as pd
 import random
 
-# =========================================
-# إعدادات الصفحة
-# =========================================
-
 st.set_page_config(
     page_title="بوصلة الهاكثونات | ريماس الدوسري",
     page_icon="🚀",
     layout="wide"
 )
-
-# =========================================
-# CSS
-# =========================================
 
 st.markdown("""
 <style>
@@ -76,11 +68,11 @@ html, body, [class*="css"] {
 .info-line {
     font-size: 16px;
     margin: 8px 0;
-    color: #1e293b;
+    color: #1e293b !important;
 }
 
 .info-label {
-    color: #1e3a8a;
+    color: #1e3a8a !important;
     font-weight: bold;
 }
 
@@ -89,7 +81,7 @@ html, body, [class*="css"] {
     padding: 15px;
     border-radius: 10px;
     font-size: 15px;
-    color: #0f172a;
+    color: #0f172a !important;
     margin-top: 15px;
     border-right: 4px solid #94a3b8;
 }
@@ -101,10 +93,15 @@ html, body, [class*="css"] {
     text-align: center;
     box-shadow: 0 4px 14px rgba(0,0,0,0.07);
     margin-bottom: 15px;
+    color: #1e293b !important;
+}
+
+.stats-box h2 {
+    color: #1e3a8a !important;
 }
 
 .ai-box {
-    background: linear-gradient(135deg,#eff6ff,#ffffff);
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
     padding: 20px;
     border-radius: 15px;
     border-right: 6px solid #2563eb;
@@ -112,12 +109,13 @@ html, body, [class*="css"] {
     margin-bottom: 15px;
 }
 
+.ai-box h3 {
+    color: #1e3a8a !important;
+    margin: 0;
+}
+
 </style>
 """, unsafe_allow_html=True)
-
-# =========================================
-# رابط البيانات
-# =========================================
 
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
 
@@ -133,16 +131,6 @@ def load_data():
 
 df = load_data()
 
-# تشخيص مؤقت
-if df is not None:
-    st.write(df.head())
-else:
-    st.error("❌ ما قدر يحمل البيانات من الشيت")
-
-# =========================================
-# الواجهة الرئيسية
-# =========================================
-
 st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
 
 search_term = st.text_input("🔍 ابحثي عن هاكثون أو جهة منظمة", placeholder="مثال: سدايا - الرياض")
@@ -156,15 +144,10 @@ if df is not None:
     with col3:
         st.markdown(f'<div class="stats-box"><h2>🎯 {df["major"].nunique()}</h2><p>عدد التخصصات</p></div>', unsafe_allow_html=True)
 
-# مولد الأفكار
 st.markdown('<div class="ai-box"><h3>💡 مولد أفكار هاكثونية</h3></div>', unsafe_allow_html=True)
 if st.button("💡 ولّد فكرة جديدة"):
     ideas = ["تطبيق ذكي للمكفوفين", "منصة AI للصحة النفسية", "مساعد ذكي للفرص التدريبية"]
     st.success(random.choice(ideas))
-
-# =========================================
-# القائمة الجانبية
-# =========================================
 
 with st.sidebar:
     st.markdown("""
@@ -181,10 +164,6 @@ with st.sidebar:
     if df is not None:
         sel_loc = st.selectbox("📍 حسب المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
         sel_major = st.selectbox("🎯 حسب التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
-
-# =========================================
-# عرض النتائج
-# =========================================
 
 if df is not None:
     filt_df = df.copy()
