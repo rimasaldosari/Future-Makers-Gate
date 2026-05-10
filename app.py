@@ -158,8 +158,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <a href="linkedin://in/rimas-aldosari-656a23375" 
-       onerror="this.href='https://www.linkedin.com/in/rimas-aldosari-656a23375'"
+    <a href="https://www.linkedin.com/in/rimas-aldosari-656a23375"
        target="_blank"
        style="
            background-color: #0A66C2;
