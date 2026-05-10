@@ -212,7 +212,7 @@ if df is not None:
             if link and link != 'nan' and len(link) > 5:
                 actual_link = link if link.startswith('http') else f"https://{link}"
                 st.link_button("🔗 اضغط هنا للتسجيل", actual_link)
-            else:
+        else:
                 st.info("رابط التسجيل سيتم تحديثه قريباً")
 
             st.markdown("<br>", unsafe_allow_html=True)
