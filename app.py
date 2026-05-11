@@ -16,6 +16,7 @@ header { visibility: hidden; }
 footer { visibility: hidden; }
 [data-testid="stToolbar"] { display: none !important; }
 [data-testid="stDecoration"] { display: none !important; }
+button[kind="header"] { display: none !important; }
 
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
@@ -29,38 +30,6 @@ html, body, [class*="css"] {
     background-color: #f8fafc;
 }
 
-/* --- تعديلات الجوال القوية --- */
-@media (max-width: 768px) {
-    /* إلغاء المسافات الجانبية الكبيرة في الجوال */
-    .block-container {
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
-        padding-top: 1rem !important;
-    }
-    
-    /* تصغير حجم العناوين */
-    h1 { font-size: 1.5rem !important; }
-    .hack-card h2 { font-size: 1.1rem !important; }
-    
-    /* جعل الإحصائيات تأخذ مساحة أقل */
-    .stats-box {
-        padding: 10px !important;
-        margin-bottom: 8px !important;
-    }
-    .stats-box h2 { font-size: 1.3rem !important; }
-
-    /* تصغير نصوص الكروت */
-    .info-line { font-size: 13px !important; }
-    .description-box { font-size: 13px !important; padding: 10px !important; }
-    
-    /* جعل الأزرار أسهل في الضغط */
-    .stButton button {
-        width: 100% !important;
-        padding: 10px !important;
-    }
-}
-
-/* --- باقي التنسيقات الأصلية --- */
 [data-testid="stSidebar"] {
     background-color: #1e3a8a !important;
 }
@@ -78,28 +47,42 @@ html, body, [class*="css"] {
     border-right: 8px solid #1e3a8a;
     transition: 0.3s ease;
     direction: rtl;
+    text-align: right;
+}
+
+.hack-card:hover {
+    transform: translateY(-5px);
 }
 
 .status-badge {
     background-color: #dcfce7;
     color: #166534;
-    padding: 4px 10px;
+    padding: 5px 12px;
     border-radius: 8px;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     display: inline-block;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
-.info-line { font-size: 16px; margin: 6px 0; color: #1e293b !important; }
-.info-label { color: #1e3a8a !important; font-weight: bold; }
+.info-line {
+    font-size: 16px;
+    margin: 8px 0;
+    color: #1e293b !important;
+}
+
+.info-label {
+    color: #1e3a8a !important;
+    font-weight: bold;
+}
 
 .description-box {
     background-color: #f1f5f9;
     padding: 15px;
     border-radius: 10px;
+    font-size: 15px;
     color: #0f172a !important;
-    margin-top: 12px;
+    margin-top: 15px;
     border-right: 4px solid #94a3b8;
 }
 
@@ -113,18 +96,63 @@ html, body, [class*="css"] {
     color: #1e293b !important;
 }
 
+.stats-box h2 {
+    color: #1e3a8a !important;
+}
+
 .ai-box {
     background: linear-gradient(135deg, #dbeafe, #eff6ff);
     padding: 20px;
     border-radius: 15px;
     border-right: 6px solid #2563eb;
+    margin-top: 15px;
     margin-bottom: 15px;
+}
+
+.ai-box h3 {
+    color: #1e3a8a !important;
+    margin: 0;
+}
+
+/* إصلاح الجوال */
+@media (max-width: 768px) {
+    .hack-card {
+        padding: 15px;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .ai-box {
+        width: 100% !important;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .ai-box h3 {
+        font-size: 18px !important;
+    }
+
+    .stats-box {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    section[data-testid="stMain"] > div {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# الرابط والتحميل
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
 
 @st.cache_data(ttl=5)
@@ -133,17 +161,17 @@ def load_data():
         data = pd.read_csv(SHEET_URL)
         data.columns = data.columns.str.strip()
         return data
-    except: return None
+    except Exception as e:
+        st.error(f"خطأ في تحميل البيانات: {e}")
+        return None
 
 df = load_data()
 
 st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة الهاكثونات والمعسكرات</h1>', unsafe_allow_html=True)
 
-# شريط البحث
 search_term = st.text_input("🔍 ابحثي عن هاكثون أو جهة منظمة", placeholder="مثال: سدايا - الرياض")
 
 if df is not None:
-    # الأعمدة تنزل تحت بعض تلقائياً في الجوال
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown(f'<div class="stats-box"><h2>🚀 {len(df)}</h2><p>عدد الفرص</p></div>', unsafe_allow_html=True)
@@ -158,37 +186,69 @@ if st.button("💡 ولّد فكرة جديدة"):
     st.success(random.choice(ideas))
 
 with st.sidebar:
-    st.markdown("<div style='text-align:center; padding-bottom: 10px;'><b style='font-size: 1.1em;'>تطوير:</b><br><span style='font-size: 1.3em; font-weight: bold;'>ريماس الدوسري</span></div>", unsafe_allow_html=True)
-    st.markdown("""<a href="https://www.linkedin.com/in/rimas-aldosari-656a23375" target="_blank" style="background-color: #0A66C2; color: white; padding: 12px 16px; border-radius: 12px; text-decoration: none; font-weight: bold; display: block; text-align: center; margin-bottom: 10px;">🔗 حسابي على LinkedIn</a>""", unsafe_allow_html=True)
+    st.markdown("""
+    <div style='text-align:center; padding-bottom: 10px;'>
+    <b style='font-size: 1.1em;'>تطوير:</b><br>
+    <span style='font-size: 1.3em; font-weight: bold;'>ريماس الدوسري</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <a href="https://www.linkedin.com/in/rimas-aldosari-656a23375"
+       target="_blank"
+       style="
+           background-color: #0A66C2;
+           color: white;
+           padding: 12px 16px;
+           border-radius: 12px;
+           text-decoration: none;
+           font-weight: bold;
+           display: block;
+           text-align: center;
+           margin-bottom: 10px;
+       ">
+       🔗 حسابي على LinkedIn
+    </a>
+    """, unsafe_allow_html=True)
+
     st.markdown("---")
+
     if df is not None:
         sel_loc = st.selectbox("📍 حسب المدينة:", ["الكل"] + sorted(df['Location'].dropna().unique().tolist()))
         sel_major = st.selectbox("🎯 حسب التخصص:", ["الكل"] + sorted(df['major'].dropna().unique().tolist()))
 
 if df is not None:
     filt_df = df.copy()
+
     if search_term:
         filt_df = filt_df[filt_df.astype(str).apply(lambda row: row.str.contains(search_term, case=False).any(), axis=1)]
-    if sel_loc != "الكل": filt_df = filt_df[filt_df['Location'] == sel_loc]
-    if sel_major != "الكل": filt_df = filt_df[filt_df['major'] == sel_major]
+    if sel_loc != "الكل":
+        filt_df = filt_df[filt_df['Location'] == sel_loc]
+    if sel_major != "الكل":
+        filt_df = filt_df[filt_df['major'] == sel_major]
 
     for _, row in filt_df.iterrows():
-        st.markdown(f"""
-        <div class="hack-card">
-            <span class="status-badge">✅ نشط</span>
-            <h2 style='color:#1e40af; margin-top:8px;'>{row.get('Name', 'نشاط تقني')}</h2>
-            <p class="info-line"><span class="info-label">📍 المدينة:</span> {row.get('Location', 'غير محدد')}</p>
-            <p class="info-line"><span class="info-label">🏢 الجهة:</span> {row.get('Organizaion', 'غير محدد')}</p>
-            <p class="info-line"><span class="info-label">🎯 التخصص:</span> {row.get('major', 'عام')}</p>
-            <p class="info-line"><span class="info-label">📅 التاريخ:</span> {row.get('Data', 'قريباً')}</p>
-            <div class="description-box"><b>📝 عن الفرصة:</b><br>{row.get('Description', 'لا يوجد وصف.')}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container():
+            st.markdown(f"""
+            <div class="hack-card">
+                <span class="status-badge">✅ نشط</span>
+                <h2 style='color:#1e40af; margin-top:8px;'>{row.get('Name', 'نشاط تقني')}</h2>
+                <p class="info-line"><span class="info-label">📍 المدينة:</span> {row.get('Location', 'غير محدد')}</p>
+                <p class="info-line"><span class="info-label">🏢 الجهة:</span> {row.get('Organizaion', 'غير محدد')}</p>
+                <p class="info-line"><span class="info-label">🎯 التخصص:</span> {row.get('major', 'عام')}</p>
+                <p class="info-line"><span class="info-label">📅 التاريخ:</span> {row.get('Data', 'قريباً')}</p>
+                <div class="description-box">
+                    <b>📝 عن الفرصة:</b><br>
+                    {row.get('Description', 'لا يوجد وصف.')}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        link = str(row.get('Link', '')).strip()
-        if link and link != 'nan' and len(link) > 5:
-            actual_link = link if link.startswith('http') else 'https://' + link
-            st.link_button("🔗 اضغط هنا للتسجيل", actual_link)
-        else:
-            st.info("رابط التسجيل سيتم تحديثه قريباً")
-        st.markdown("<br>", unsafe_allow_html=True)
+            link = str(row.get('Link', '')).strip()
+            if link and link != 'nan' and len(link) > 5:
+                actual_link = link if link.startswith('http') else 'https://' + link
+                st.link_button("🔗 اضغط هنا للتسجيل", actual_link)
+            else:
+                st.info("رابط التسجيل سيتم تحديثه قريباً")
+
+            st.markdown("<br>", unsafe_allow_html=True)
