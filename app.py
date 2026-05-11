@@ -38,6 +38,7 @@ html, body, [class*="css"] {
     color: white !important;
 }
 
+/* تعديل الكروت لتناسب كل الشاشات */
 .hack-card {
     background: white;
     padding: 25px;
@@ -48,6 +49,7 @@ html, body, [class*="css"] {
     transition: 0.3s ease;
     direction: rtl;
     text-align: right;
+    word-wrap: break-word; /* لمنع خروج النص عن الكرت */
 }
 
 .hack-card:hover {
@@ -98,6 +100,7 @@ html, body, [class*="css"] {
 
 .stats-box h2 {
     color: #1e3a8a !important;
+    margin: 0;
 }
 
 .ai-box {
@@ -109,50 +112,36 @@ html, body, [class*="css"] {
     margin-bottom: 15px;
 }
 
-.ai-box h3 {
-    color: #1e3a8a !important;
-    margin: 0;
-}
-
-/* إصلاح الجوال */
+/* =========================================
+   إصلاحات الجوال (Media Queries)
+   ========================================= */
 @media (max-width: 768px) {
+    /* تصغير الحواف الجانبية في الجوال */
+    .block-container {
+        padding: 1rem 0.5rem !important;
+    }
+    
+    /* جعل الكروت تأخذ عرض الشاشة بالكامل */
     .hack-card {
         padding: 15px;
-        margin-right: 0 !important;
-        margin-left: 0 !important;
+        border-right-width: 5px;
+    }
+    
+    /* تصغير الخطوط في الجوال لتقليل الزحمة */
+    h1 { font-size: 1.8rem !important; }
+    .hack-card h2 { font-size: 1.3rem !important; }
+    .info-line { font-size: 14px !important; }
+    
+    /* جعل أزرار التسجيل بعرض كامل لتسهيل الضغط بالجوال */
+    div.stButton > button {
         width: 100% !important;
-        box-sizing: border-box;
-    }
-
-    .ai-box {
-        width: 100% !important;
-        box-sizing: border-box;
-        overflow: hidden;
-    }
-
-    .ai-box h3 {
-        font-size: 18px !important;
-    }
-
-    .stats-box {
-        width: 100% !important;
-        box-sizing: border-box;
-    }
-
-    .block-container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-
-    section[data-testid="stMain"] > div {
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
     }
 }
 
 </style>
 """, unsafe_allow_html=True)
 
+# بقية الكود كما هو تماماً
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoHDmJwadCVmFXscpcFpsa4KAmxtjp6z-Ch5tOerG-5ztT6ysJho-RPfvBpX5QzMLnoDXfisRGYHuA/pub?gid=0&single=true&output=csv"
 
 @st.cache_data(ttl=5)
@@ -172,6 +161,7 @@ st.markdown('<h1 style="text-align:center; color:#1e3a8a;">🚀 بوصلة ال�
 search_term = st.text_input("🔍 ابحثي عن هاكثون أو جهة منظمة", placeholder="مثال: سدايا - الرياض")
 
 if df is not None:
+    # استخدام columns التي تنكسر تلقائياً في الجوال
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown(f'<div class="stats-box"><h2>🚀 {len(df)}</h2><p>عدد الفرص</p></div>', unsafe_allow_html=True)
@@ -182,11 +172,11 @@ if df is not None:
 
 st.markdown('<div class="ai-box"><h3>💡 مولد أفكار هاكثونية</h3></div>', unsafe_allow_html=True)
 if st.button("💡 ولّد فكرة جديدة"):
-    ideas = ["تطبيق ذكي للمكفوفين", "منصة AI للصحة النفسية", "مساعد ذكي للفرص التدريبية"]
+    ideas = ["تطبيق ذكي للمكفوفين", "منصة AI للصحة النفسية", "مساعد ذكي للفرص التدريبية", "تطبيق تدوير النفايات الذكي"]
     st.success(random.choice(ideas))
 
 with st.sidebar:
-    st.markdown("""
+    st.markdown(f"""
     <div style='text-align:center; padding-bottom: 10px;'>
     <b style='font-size: 1.1em;'>تطوير:</b><br>
     <span style='font-size: 1.3em; font-weight: bold;'>ريماس الدوسري</span>
