@@ -114,6 +114,42 @@ html, body, [class*="css"] {
     margin: 0;
 }
 
+/* إصلاح الجوال */
+@media (max-width: 768px) {
+    .hack-card {
+        padding: 15px;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .ai-box {
+        width: 100% !important;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .ai-box h3 {
+        font-size: 18px !important;
+    }
+
+    .stats-box {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    section[data-testid="stMain"] > div {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -157,7 +193,23 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    st.link_button("🔗 حسابي على LinkedIn", "https://www.linkedin.com/in/rimas-aldosari-656a23375")
+    st.markdown("""
+    <a href="https://www.linkedin.com/in/rimas-aldosari-656a23375"
+       target="_blank"
+       style="
+           background-color: #0A66C2;
+           color: white;
+           padding: 12px 16px;
+           border-radius: 12px;
+           text-decoration: none;
+           font-weight: bold;
+           display: block;
+           text-align: center;
+           margin-bottom: 10px;
+       ">
+       🔗 حسابي على LinkedIn
+    </a>
+    """, unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -194,7 +246,7 @@ if df is not None:
 
             link = str(row.get('Link', '')).strip()
             if link and link != 'nan' and len(link) > 5:
-                actual_link = link if link.startswith('http') else f"https://{link}"
+                actual_link = link if link.startswith('http') else 'https://' + link
                 st.link_button("🔗 اضغط هنا للتسجيل", actual_link)
             else:
                 st.info("رابط التسجيل سيتم تحديثه قريباً")
